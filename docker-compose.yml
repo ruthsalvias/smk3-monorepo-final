@@ -1,0 +1,384 @@
+name: smk3
+
+# =============================================================================
+# SMK3 MONOREPO — seluruh aplikasi (frontend + backend + Keycloak) hanya
+# terekspos lewat SATU port: service `gateway` (default 8080).
+# Service lain tidak mem-publish port apa pun ke host.
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # EDGE GATEWAY (SATU-SATUNYA PORT PUBLIK)
+  # SPA React + reverse proxy ke api-gateway, Keycloak, dan file upload.
+  # ===========================================================================
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/gateway/Dockerfile
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-8080}:80'
+    depends_on:
+      - api-gateway
+      - keycloak
+    networks:
+      smk3_network:
+        aliases:
+          - sekolah_web
+          - sekolah_nginx
+
+  # ===========================================================================
+  # INFRASTRUKTUR INTI
+  # ===========================================================================
+  db-keycloak:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${KC_DB_NAME}
+      POSTGRES_USER: ${KC_DB_USER}
+      POSTGRES_PASSWORD: ${KC_DB_PASS}
+    volumes:
+      - db_keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${KC_DB_USER} -d ${KC_DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.3
+    command: start-dev --import-realm
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: ${KC_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db-keycloak:5432/${KC_DB_NAME}
+      KC_DB_USERNAME: ${KC_DB_USER}
+      KC_DB_PASSWORD: ${KC_DB_PASS}
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+      # Wajib: issuer token mengikuti origin publik yang diteruskan gateway.
+      KC_PROXY_HEADERS: xforwarded
+    volumes:
+      - ./docker/keycloak/import:/opt/keycloak/data/import:ro
+    depends_on:
+      db-keycloak:
+        condition: service_healthy
+    networks:
+      smk3_network:
+        aliases:
+          - sekolah_keycloak
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RMQ_PASS}
+    expose:
+      - '5672'
+    networks:
+      smk3_network:
+        aliases:
+          - sekolah_rabbitmq
+
+  # ===========================================================================
+  # DATABASE MICROSERVICES
+  # ===========================================================================
+  db-pelanggaran:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_pelanggaran
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_pelanggaran_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d db_pelanggaran']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_pelanggaran
+
+  db-profile:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_profile
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_profile_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d db_profile']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_profile
+
+  db-berita:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_berita
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_berita_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d db_berita']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_berita
+
+  db-portofolio:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_portofolio
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_portofolio_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d db_portofolio']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_portofolio
+
+  db-management:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_management
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_management_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d db_management']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      smk3_network:
+        aliases:
+          - db_management
+
+  # ===========================================================================
+  # API GATEWAY (NESTJS)
+  # ===========================================================================
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: api-gateway
+    restart: unless-stopped
+    expose:
+      - '3000'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    environment:
+      - NODE_ENV=production
+      # Semua request datang dari origin yang sama lewat gateway.
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+      # Issuer token Keycloak mengikuti origin publik.
+      - KEYCLOAK_ISSUER=${PUBLIC_ORIGIN}/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_JWKS_URL=${KEYCLOAK_JWKS_URL}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
+      - KEYCLOAK_ADMIN_URL=${KEYCLOAK_ADMIN_URL}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_PUBLIC_CLIENT_ID=${KEYCLOAK_PUBLIC_CLIENT_ID}
+      - SERVICE_PELANGGARAN_URL=${SERVICE_PELANGGARAN_URL}
+      - SERVICE_PROFILE_URL=${SERVICE_PROFILE_URL}
+      - SERVICE_BERITA_URL=${SERVICE_BERITA_URL}
+      - SERVICE_PORTOFOLIO_URL=${SERVICE_PORTOFOLIO_URL}
+      - SERVICE_MANAGEMENT_URL=${SERVICE_MANAGEMENT_URL}
+    depends_on:
+      - keycloak
+      - service-pelanggaran
+      - service-profile
+      - service-berita
+      - service-portofolio
+      - service-management
+    networks:
+      smk3_network:
+        aliases:
+          - api_gateway
+
+  # ===========================================================================
+  # NESTJS SERVICES
+  # ===========================================================================
+  service-pelanggaran:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: service-pelanggaran
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - DATABASE_URL=${DB_PELANGGARAN_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - PORT=${SERVICE_PELANGGARAN_PORT}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+    depends_on:
+      db-pelanggaran:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      smk3_network:
+        aliases:
+          - service_pelanggaran
+
+  service-profile:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: service-profile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - DATABASE_URL=${DB_PROFILE_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - PORT=${SERVICE_PROFILE_PORT}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+    volumes:
+      - profile_uploads:/app/uploads
+    depends_on:
+      db-profile:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      smk3_network:
+        aliases:
+          - service_profile
+
+  service-berita:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: service-berita
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - DATABASE_URL=${DB_BERITA_URL}
+      - PORT=${SERVICE_BERITA_PORT}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+      - TYPEORM_SYNC=true
+    volumes:
+      - berita_uploads:/app/uploads
+    depends_on:
+      db-berita:
+        condition: service_healthy
+    networks:
+      smk3_network:
+        aliases:
+          - service_berita
+
+  service-portofolio:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: service-portofolio
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - DATABASE_URL=${DB_PORTOFOLIO_URL}
+      - PORT=${SERVICE_PORTOFOLIO_PORT}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+    volumes:
+      - portofolio_uploads:/app/uploads/portofolio
+    depends_on:
+      db-portofolio:
+        condition: service_healthy
+    networks:
+      smk3_network:
+        aliases:
+          - service_portofolio
+
+  service-management:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: service-management
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${PUBLIC_ORIGIN}
+      - DATABASE_URL=${DB_MANAGEMENT_URL}
+      - DB_MANAGEMENT_URL=${DB_MANAGEMENT_URL}
+      - DB_HOST=db-management
+      - DB_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PORT=${SERVICE_MANAGEMENT_PORT}
+      - SERVICE_MANAGEMENT_PORT=${SERVICE_MANAGEMENT_PORT}
+      - INTERNAL_GATEWAY_SECRET=${INTERNAL_GATEWAY_SECRET}
+    volumes:
+      - management_uploads:/app/uploads
+    depends_on:
+      db-management:
+        condition: service_healthy
+    networks:
+      smk3_network:
+        aliases:
+          - service_management
+
+# =============================================================================
+# PERSISTENT STORAGE
+# =============================================================================
+volumes:
+  db_keycloak_data:
+  db_pelanggaran_data:
+  db_profile_data:
+  db_berita_data:
+  db_portofolio_data:
+  db_management_data:
+  management_uploads:
+  portofolio_uploads:
+  profile_uploads:
+  berita_uploads:
+
+# =============================================================================
+# NETWORK
+# =============================================================================
+networks:
+  smk3_network:
+    driver: bridge

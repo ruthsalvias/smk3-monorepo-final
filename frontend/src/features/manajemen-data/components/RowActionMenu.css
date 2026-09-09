@@ -1,0 +1,46 @@
+.btn-kebab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: #6b7280;
+  padding: 4px 9px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-kebab:hover { background: #f3f4f6; color: #111827; }
+
+.row-action-menu {
+  position: fixed;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 1000;
+  overflow: hidden;
+  padding: 4px 0;
+}
+
+.row-action-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 9px 14px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+}
+.row-action-menu button:hover { background: #f9fafb; }
+.row-action-menu button.hapus { color: #dc2626; }
+.row-action-menu button.hapus:hover { background: #fef2f2; }
+
+.row-action-sep {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 4px 0;
+}

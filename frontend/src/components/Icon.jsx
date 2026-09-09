@@ -1,0 +1,340 @@
+/**
+ * Kumpulan ikon SVG profesional (stroke-based, mengikuti currentColor).
+ * Dipakai untuk menggantikan emoji di seluruh aplikasi.
+ */
+
+const paths = {
+  dashboard: (
+    <>
+      <rect x="3" y="3" width="7" height="9" rx="1.5" />
+      <rect x="14" y="3" width="7" height="5" rx="1.5" />
+      <rect x="14" y="12" width="7" height="9" rx="1.5" />
+      <rect x="3" y="16" width="7" height="5" rx="1.5" />
+    </>
+  ),
+  news: (
+    <>
+      <path d="M4 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1Z" />
+      <path d="M16 9h3a1 1 0 0 1 1 1v7a2 2 0 0 1-2 2" />
+      <path d="M6.5 8.5h6M6.5 12h6M6.5 15.5h4" />
+    </>
+  ),
+  megaphone: (
+    <>
+      <path d="M3 11v2a1 1 0 0 0 1 1h2l8 4V6l-8 4H4a1 1 0 0 0-1 1Z" />
+      <path d="M17.5 9a3.5 3.5 0 0 1 0 6" />
+      <path d="M6 14v4a1 1 0 0 0 1 1h1.5a1 1 0 0 0 1-1v-3" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </>
+  ),
+  scroll: (
+    <>
+      <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 0 2 2H8a2 2 0 0 1-2-2V4Z" />
+      <path d="M6 4a2 2 0 0 0-2 2v2h2" />
+      <path d="M10 9h6M10 13h6" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  sitemap: (
+    <>
+      <rect x="9" y="3" width="6" height="4.5" rx="1" />
+      <rect x="2.5" y="16.5" width="6" height="4.5" rx="1" />
+      <rect x="15.5" y="16.5" width="6" height="4.5" rx="1" />
+      <path d="M12 7.5v3.5M5.5 16.5V13h13v3.5M12 11h0" />
+    </>
+  ),
+  graduation: (
+    <>
+      <path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" />
+      <path d="M6.5 10.8V15c0 1.7 2.5 3 5.5 3s5.5-1.3 5.5-3v-4.2" />
+      <path d="M21.5 8.5v5" />
+    </>
+  ),
+  building: (
+    <>
+      <path d="M3 21h18" />
+      <path d="M5 21V6a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15" />
+      <path d="M14 21V10h4a1 1 0 0 1 1 1v10" />
+      <path d="M8 9h3M8 13h3M8 17h3" />
+    </>
+  ),
+  trophy: (
+    <>
+      <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+      <path d="M8 5.5H5.5a.5.5 0 0 0-.5.5c0 2 1.2 3.5 3 3.9M16 5.5h2.5a.5.5 0 0 1 .5.5c0 2-1.2 3.5-3 3.9" />
+      <path d="M12 13v4M9 20h6M10 17h4l.5 3h-5l.5-3Z" />
+    </>
+  ),
+  handshake: (
+    <>
+      <path d="m11 7 2-1.2a2 2 0 0 1 2 0L21 9v6l-2 1" />
+      <path d="M3 9l4-2.2a2 2 0 0 1 2 0L13 9l-2.4 2a1.5 1.5 0 0 1-2 0L7 9.6" />
+      <path d="M3 9v6l3 1.6 3.5 2.6a1.5 1.5 0 0 0 2-.2l4.5-4.4" />
+    </>
+  ),
+  warning: (
+    <>
+      <path d="M10.3 4.3 2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z" />
+      <path d="M12 9.5v4.5M12 17.3h.01" />
+    </>
+  ),
+  students: (
+    <>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0" />
+      <circle cx="17.5" cy="9.5" r="2.4" />
+      <path d="M17 14.2a5 5 0 0 1 4.2 5.3" />
+    </>
+  ),
+  teacher: (
+    <>
+      <circle cx="12" cy="7" r="3.2" />
+      <path d="M5.5 20.5a6.5 6.5 0 0 1 13 0" />
+      <path d="M18.5 4.5h3v4h-3z" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0" />
+      <path d="M16.5 5.2a3.2 3.2 0 0 1 0 5.6M17.5 14.2a5 5 0 0 1 3.7 5.3" />
+    </>
+  ),
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 14a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.2a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z" />
+    </>
+  ),
+  chart: (
+    <>
+      <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+      <path d="M7 15.5V11M12 15.5V7M17 15.5v-3" />
+    </>
+  ),
+  mapPin: (
+    <>
+      <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" />
+      <circle cx="12" cy="10" r="2.6" />
+    </>
+  ),
+  phone: (
+    <>
+      <path d="M6.2 3.5h2.9l1.5 3.7-2 1.4a12 12 0 0 0 5.8 5.8l1.4-2 3.7 1.5v2.9a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="2.5" y="5" width="19" height="14" rx="2" />
+      <path d="m3.5 7 7.4 5.3a2 2 0 0 0 2.2 0L20.5 7" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
+  arrowRight: (
+    <>
+      <path d="M4.5 12h15M13.5 6l6 6-6 6" />
+    </>
+  ),
+  externalLink: (
+    <>
+      <path d="M14 4h6v6" />
+      <path d="M20 4 11 13" />
+      <path d="M18 14.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4.5" />
+    </>
+  ),
+  power: (
+    <>
+      <path d="M12 3v9" />
+      <path d="M7.2 6.6a8 8 0 1 0 9.6 0" />
+    </>
+  ),
+  menu: (
+    <>
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </>
+  ),
+  close: (
+    <>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </>
+  ),
+  chevronRight: (
+    <>
+      <path d="m9 5 7 7-7 7" />
+    </>
+  ),
+  chevronLeft: (
+    <>
+      <path d="m15 5-7 7 7 7" />
+    </>
+  ),
+  plus: (
+    <>
+      <path d="M12 5v14M5 12h14" />
+    </>
+  ),
+  edit: (
+    <>
+      <path d="M4 20h4.5L19 9.5a2.1 2.1 0 0 0-3-3L5.5 17 4 20Z" />
+      <path d="m14.5 7.5 2 2" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M4 7h16M9.5 7V5.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V7" />
+      <path d="M6.5 7 7.4 19a2 2 0 0 0 2 1.9h5.2a2 2 0 0 0 2-1.9L17.5 7" />
+      <path d="M10.5 11v6M13.5 11v6" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3" y="4.5" width="18" height="15" rx="2" />
+      <circle cx="8.5" cy="10" r="1.6" />
+      <path d="m4 17 4.8-4.4a1.6 1.6 0 0 1 2.2 0L16 17M14 15l1.7-1.6a1.6 1.6 0 0 1 2.2 0L20 15.5" />
+    </>
+  ),
+  upload: (
+    <>
+      <path d="M12 16V4.5M7.5 9 12 4.5 16.5 9" />
+      <path d="M4 15v3.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V15" />
+    </>
+  ),
+  download: (
+    <>
+      <path d="M12 4v11.5M7.5 11 12 15.5 16.5 11" />
+      <path d="M4 15v3.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V15" />
+    </>
+  ),
+  facebook: (
+    <>
+      <path d="M14.5 8.5h2.2V5.4h-2.4c-2.3 0-3.7 1.5-3.7 3.8v1.6H8.4v3.1h2.2V21h3.3v-7.1h2.3l.4-3.1h-2.7V9.6c0-.7.3-1.1.6-1.1Z" />
+    </>
+  ),
+  instagram: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17" cy="7" r="1" />
+    </>
+  ),
+  youtube: (
+    <>
+      <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+      <path d="m10.5 9.5 5 2.5-5 2.5v-5Z" />
+    </>
+  ),
+  twitter: (
+    <>
+      <path d="m4 4 7 9.2L4.4 20M19.5 4h-2.9l-11.1 16h2.9" />
+      <path d="M13 10.8 20 20h-3.5" />
+    </>
+  ),
+  tiktok: (
+    <>
+      <path d="M14 4v10.2a3.6 3.6 0 1 1-3.6-3.6" />
+      <path d="M14 4c.4 2.6 2 4 4.6 4.2" />
+    </>
+  ),
+  linkedin: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="2.5" />
+      <path d="M8 10.5V16M8 7.7v.01M12 16v-3.2a1.9 1.9 0 0 1 3.8 0V16" />
+      <path d="M12 10.5V16" />
+    </>
+  ),
+  whatsapp: (
+    <>
+      <path d="M3.5 20.5 4.8 16A8 8 0 1 1 8 19.2l-4.5 1.3Z" />
+      <path d="M9 9.2c.2 1.6 1.5 4.2 4.3 5.4.7.3 1.2-.1 1.4-.6l.3-.8-2-1-.7.8c-1-.5-1.7-1.2-2.1-2.2l.8-.6-.8-2-1 .3c-.5.2-.4 1-.2 1.7Z" />
+    </>
+  ),
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.3 3.3 8.5S14.2 18.1 12 20.5c-2.2-2.4-3.3-5.3-3.3-8.5S9.8 5.9 12 3.5Z" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5Z" />
+      <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15a2 2 0 0 1 2-2h3.5a1.5 1.5 0 0 0 1.5-1.5Z" />
+    </>
+  ),
+  briefcase: (
+    <>
+      <rect x="3" y="7.5" width="18" height="12" rx="2" />
+      <path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5" />
+      <path d="M3 12.5h18" />
+    </>
+  ),
+  star: (
+    <>
+      <path d="m12 4 2.4 5 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4L4.2 9.8 9.6 9 12 4Z" />
+    </>
+  ),
+  shield: (
+    <>
+      <path d="M12 3.5 19.5 6v6c0 4.3-3 7.3-7.5 8.5C7.5 19.3 4.5 16.3 4.5 12V6L12 3.5Z" />
+      <path d="m9 12 2.2 2.2L15.5 10" />
+    </>
+  ),
+  pin: (
+    <>
+      <path d="M9.5 3.5h5l-.7 5 3.2 3.2H7l3.2-3.2-.7-5Z" />
+      <path d="M12 11.7V20.5" />
+    </>
+  ),
+};
+
+export const iconNames = Object.keys(paths);
+
+export default function Icon({ name, size = 20, className = "", strokeWidth = 1.7, ...rest }) {
+  const shape = paths[name] || paths.star;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`app-icon ${className}`.trim()}
+      aria-hidden="true"
+      focusable="false"
+      {...rest}
+    >
+      {shape}
+    </svg>
+  );
+}

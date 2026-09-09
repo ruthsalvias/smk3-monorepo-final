@@ -1,0 +1,11 @@
+proxy_http_version 1.1;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $fwd_proto;
+proxy_set_header X-Forwarded-Host $http_host;
+proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+proxy_busy_buffers_size 256k;
+proxy_read_timeout 60s;
+proxy_connect_timeout 60s;

@@ -1,0 +1,10 @@
+# Context build gateway hanya butuh frontend/ dan docker/gateway/
+.git
+.env
+backend
+tools
+node_modules
+**/node_modules
+frontend/dist
+frontend/public_html
+*.log
