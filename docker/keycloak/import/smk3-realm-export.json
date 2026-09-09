@@ -111,6 +111,13 @@
         "clientRole": false,
         "containerId": "b3af582d-902d-470c-9be9-9dd58c4b8636",
         "attributes": {}
+      },
+      {
+        "name": "master_admin",
+        "description": "Superadmin aplikasi SMK3",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "smk3"
       }
     ],
     "client": {
@@ -665,19 +672,19 @@
       "clientId": "api-gateway",
       "name": "SMK 3 API Gateway",
       "description": "",
-      "rootUrl": "",
-      "adminUrl": "",
-      "baseUrl": "",
+      "rootUrl": "${authBaseUrl}",
+      "adminUrl": "${authBaseUrl}",
+      "baseUrl": "/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "*"
+        "/*"
       ],
       "webOrigins": [
-        "*"
+        "+"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -915,18 +922,19 @@
       "clientId": "smk3-web-client",
       "name": "SMK3 Web Front-End",
       "description": "Client untuk aplikasi React (Siswa & Publik)",
-      "rootUrl": "http://localhost:5173",
-      "adminUrl": "http://localhost:5173",
-      "baseUrl": "http://localhost:5173",
+      "rootUrl": "${authBaseUrl}",
+      "adminUrl": "${authBaseUrl}",
+      "baseUrl": "/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
+        "/*",
         "http://localhost:5173/*"
       ],
       "webOrigins": [
-        "http://localhost:5173"
+        "+"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -941,7 +949,7 @@
       "attributes": {
         "oidc.ciba.grant.enabled": "false",
         "backchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "http://localhost:5173/*",
+        "post.logout.redirect.uris": "+",
         "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"

@@ -51,7 +51,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
-    command: start-dev --import-realm
+    command: start --import-realm
     restart: unless-stopped
     environment:
       KEYCLOAK_ADMIN: ${KC_ADMIN}
@@ -61,9 +61,11 @@ services:
       KC_DB_USERNAME: ${KC_DB_USER}
       KC_DB_PASSWORD: ${KC_DB_PASS}
       KC_HOSTNAME_STRICT: 'false'
+      # TLS diterminasi di depan gateway, jadi Keycloak cukup melayani HTTP.
       KC_HTTP_ENABLED: 'true'
       # Wajib: issuer token mengikuti origin publik yang diteruskan gateway.
       KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: 'true'
     volumes:
       - ./docker/keycloak/import:/opt/keycloak/data/import:ro
     depends_on:
