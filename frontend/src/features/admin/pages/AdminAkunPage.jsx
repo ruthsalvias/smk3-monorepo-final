@@ -9,6 +9,7 @@ import {
   showSuccessDialog,
 } from "../../../helpers/toolsHelper";
 import apiGateway from "../../../config/axios";
+import { useAuth } from "../../auth/context/AuthContext";
 import {
   buatAkun,
   buatAkunSiswaMassal,
@@ -38,6 +39,9 @@ function tanggalSingkat(iso) {
 }
 
 export default function AdminAkunPage() {
+  const { isAuth, roles = [] } = useAuth();
+  const bolehAkses = isAuth && roles.includes("master_admin");
+
   const [akun, setAkun] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cari, setCari] = useState("");
@@ -57,9 +61,11 @@ export default function AdminAkunPage() {
   const [siswaTanpaAkun, setSiswaTanpaAkun] = useState([]);
   const [memuatSiswa, setMemuatSiswa] = useState(false);
 
+  // Tanpa penjaga ini, halaman ikut memanggil API saat sesi sudah hilang (mis. setelah logout) dan memunculkan dialog 401.
   useEffect(() => {
+    if (!bolehAkses) return;
     muatAkun();
-  }, []);
+  }, [bolehAkses]);
 
   const muatAkun = async () => {
     setLoading(true);
@@ -122,7 +128,8 @@ export default function AdminAkunPage() {
     setMemuatSiswa(true);
     try {
       const res = await apiGateway.get("/management/siswa?limit=1000&offset=0");
-      const daftar = res.data?.data?.items || res.data?.data || [];
+      const isi = res.data?.data;
+      const daftar = Array.isArray(isi) ? isi : isi?.siswa || isi?.items || [];
       const usernameAda = new Set(akun.map((a) => a.username));
       setSiswaTanpaAkun(
         daftar
